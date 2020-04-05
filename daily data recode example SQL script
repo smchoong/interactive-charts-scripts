@@ -1,0 +1,69 @@
+drop table if exists hubproject.navigator_daily_slim;
+
+create table hubproject.navigator_daily_slim as (
+     			select date, weight,
+        	case when p1 = 1 then 'Democrat'
+     					when p1 = 2 then 'Democrat'
+     					when p1 = 3 then 'Democrat'
+     					when p1 = 4 then 'Independent'
+     					when p1 = 5 then 'Republican'
+     					when p1 = 6 then 'Republican'
+     					when p1 = 7 then 'Republican'
+     						else 'NULL' end as party,  
+     			case when dage= 1 then'18-44'
+              when dage= 2 then '18-44'
+     					when dage= 3 then '18-44'
+     					when dage= 4 then '18-44'
+     					when dage= 5 then '18-44'
+     					when dage= 6 then '45-64'
+     					when dage= 7 then '45-64'
+     					when dage= 8 then '45-64'
+     					when dage= 9 then '45-64'
+     					when dage= 10 then '65+'
+     					when dage= 11 then '65+'
+              	else 'NULL' end as age,
+     			case when drace = 1 then 'Black'
+     					when drace = 2 then 'White'
+     					when drace = 3 then 'Hispanic'
+     					when drace = 4 then 'Asian-American'
+     					when drace = 5 then 'Native American'
+     					when drace = 6 then 'Other'
+     						else 'NULL' end as race,
+     			case when d102 = 1 then 'HS or less'
+     					when d102 = 2 then 'HS or less'
+     					when d102 = 3 then 'Some college'
+     					when d102 = 4 then 'Some college'
+     					when d102 = 5 then 'College degree'
+     					when d102 = 6 then 'College degree'
+     					when d102 = 7 then 'College degree'
+     						else 'NULL' end as education,
+     			case when d100 = 1 then 'Male'
+     					when d100 = 2 then 'Female'
+     						else 'NULL' end as gender,
+     			case when n1= 1 then 'Strongly approve'
+              when n1= 2 then 'Somewhat approve'
+              when n1= 3 then 'Somewhat disapprove'
+              when n1= 4 then 'Strongly disapprove'
+     					when n1= 5 then 'Not sure'
+     						else 'NULL' end as trump_job_approval,
+     			case when n2= 1 then 'Strongly approve'
+              when n2= 2 then 'Somewhat approve'
+              when n2= 3 then 'Somewhat disapprove'
+              when n2= 4 then 'Strongly disapprove'
+     					when n2= 5 then 'Not sure'
+     						else 'NULL' end as trump_econ_approval,
+     			case when q3= 1 then 'Strongly approve'
+              when q3= 2 then 'Somewhat approve'
+              when q3= 3 then 'Somewhat disapprove'
+              when q3= 4 then 'Strongly disapprove'
+     					when q3= 5 then 'Not sure'
+     						else 'NULL' end as trump_covid_approval,
+     			case when q15= 1 then 'excellent'
+              when q15= 2 then 'good'
+              when q15= 3 then 'not so good'
+              when q15= 4 then 'poor'
+              when q15= 5 then 'not sure'
+     						else 'NULL' end as economy_rating
+     
+          from hubproject.navigator_daily_cumulative_20200331
+					group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
