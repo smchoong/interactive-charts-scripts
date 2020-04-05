@@ -1,0 +1,38 @@
+#load packages
+library(tidyverse)
+library(survey)
+
+#import csv file
+library(readr)
+nav_daily_slim_v2 <- read_csv("nav_daily_slim_v2.csv")
+
+#specify survey design to incorporate weights
+#insert cumulative dataset with new rows appended (daily)
+survey_design <- svydesign(data = nav_daily_slim_v2, 
+                        strata = NULL, 
+                        id = ~1, 
+                        weights = ~weight)
+                        
+#make weighted frequency table(s) 
+#calculate table proportions grouped by date and other variables
+tab_covid <- svytable(~date + trump_covid_approval, 
+                     design = survey_design) %>%
+                     as.data.frame() %>%
+                     group_by(date, trump_covid_approval) %>%
+                     mutate(n = sum(Freq), 
+                       Prop_n = Freq/sum(Freq)) %>%
+                     ungroup()
+  
+#ordering the table output
+tab_covid$trump_covid_approval <- factor(
+  tab_covid$trump_covid_approval, levels = c("Strongly approve",
+                                            "Somewhat approve",
+                                            "Not sure",
+                                            "Somewhat disapprove",
+                                            "Strongly disapprove")
+)
+tab_covid[order(tab_covid$trump_covid_approval),]
+
+#write table(s) to csv and import to Civis
+write.table(tab_covid, file = "nav_daily_covidapp_overall.csv", 
+            row.names = F, sep = ",")
